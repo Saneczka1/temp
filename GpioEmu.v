@@ -30,7 +30,7 @@ module gpioemu(n_reset,
     reg unsigned[23:0] A2;
     reg unsigned[23:0] A1;
     reg unsigned[31:0] W;
-    
+    reg unsigned[23:0] L;
     reg unsigned[1:0] B;
     reg unsigned[3:0] state;
 	reg  valid;

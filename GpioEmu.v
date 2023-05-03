@@ -49,7 +49,6 @@ module gpioemu(n_reset,
         gpio_out_s <= 0;
         sdata_out_s <= 0;
         state <= 4;
-        result <=49'b0;
 		W <= 32'b0;
         ready <= 1'b1;
         A1 <= 0;
@@ -103,6 +102,7 @@ end
 always @(posedge clk) begin
     case (state)
         IDLE: begin
+		result <=49'b0;
 		tmp_ones_count <= 0;
             if (!ready) begin
                 state <= MULT;

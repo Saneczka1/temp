@@ -24,7 +24,6 @@ module gpioemu(n_reset,                 //magistrala z CPU
 	output[31:0]    gpio_out;       //dane wyjsciowe do peryferii (laczone np.: z LED'ami)
 	reg [31:0]      gpio_out_s;     //stan peryferii wejsciowych (stan wyjsc - ale nie laczony z np.: LED'ami)
 
-
 // ============================================
     reg unsigned [48:0] result;
     reg unsigned[23:0] A2;
@@ -36,19 +35,17 @@ module gpioemu(n_reset,                 //magistrala z CPU
     reg unsigned[3:0] state;
     reg unsigned[23:0] ones_count;
     reg unsigned[23:0] tmp_ones_count;
-	
-	
+	reg bit          ready;
+	reg [23:0]       wA1;
+	reg [23:0]       wA2;
 
     localparam IDLE = 0,
               MULT = 1,
               COUNT_ONES = 2,
               DONE = 3;
-			  
-			  
 
     always @(negedge n_reset)
-		begin	//zapis
-        
+		begin
 			gpio_in_s <= 0;
             gpio_out_s <= 0;
 			sdata_out_s <= 0;
@@ -61,14 +58,13 @@ module gpioemu(n_reset,                 //magistrala z CPU
             A1 <= 0;
             A2 <= 0;
 			L <= 0;
-			B <= 00
-			
+			B <= 2'b00;
         end 
-		
+
 	always @(posedge swr)
-	
-	begin
-			if(saddress == 16'h3A0 && sdata_out_s[0]) // uruchomienie pracy modułu ??? czy potrzebna ta przypiska
+		begin
+		
+					if(saddress == 16'h3A0 && sdata_out_s[0]) // uruchomienie pracy modułu
 				begin
 					ready <= 0;
 					state <= IDLE;
@@ -88,16 +84,14 @@ module gpioemu(n_reset,                 //magistrala z CPU
 						sdata_out_s <= result;
 				end
 			else if (saddress == 16'h3A0) // adres dla statusu
-			sdata_out_s <= {30'b0,B};
-				
+				sdata_out_s <= {30'b0,B};
 			else if (saddress == 16'h398) // adres dla statusu
-				sdata_out_s <= L;					//????
+				sdata_out_s <= L;
 			else // każdy inny adres powinien dać 0
 				sdata_out_s <= 0;
 		end
 	
-	
-	
+	always @(posedge clk)
 		begin
             case (state)
                 IDLE: begin
@@ -109,44 +103,37 @@ module gpioemu(n_reset,                 //magistrala z CPU
                         state <= MULT;
                     end
                 end
-   MULT: begin
-    for (integer i = 0; i < 24; i = i + 1) begin
-        if (wA2[i]) begin
-            result <= result + ({24'b0,wA1} << i);
-        end
-		
-    end
-    state <= COUNT_ONES;
-end 
+                MULT: begin
+                    for (integer i = 0; i < 24; i = i + 1) begin
+                        if (wA2[i]) begin
+                            result <= result + ({24'b0,wA1} << i);
+                        end
+                    end
+                    state <= COUNT_ONES;
+                end
                 COUNT_ONES: begin
-                    for (integer i = 0; i < 32; i++) begin
-                       if (result[i] == 1) begin
-						tmp_ones_count <= tmp_ones_count + 1;
-						end
+                    for (integer i = 0; i < 48; i++) begin
+                        if (result[i] == 1) begin
+                            tmp_ones_count <= tmp_ones_count + 1;
+                        end
                     end
                     ones_count <= tmp_ones_count;
                     state <= DONE;
                 end
                 DONE: begin
-				
-				if (swr && saddress == 16'h390) begin // write B
-				B <= sdata_in;
-				end else if (swr && saddress == 16'h398) begin // write L
-				L <= sdata_in;
-				end else if (swr && saddress == 16'h870) begin // write W
-				W <= sdata_in;													   
-                        state <= IDLE;
+                    if (swr && saddress == 16'h390) begin // write B
+                        B <= sdata_in[1:0];
+                    end else if (swr && saddress == 16'h398) begin // write L
+                        L <= sdata_in[23:0];
+                    end else if (swr && saddress == 16'h870) begin // write W
+                        W <= sdata_in[32:0];
                     end
+                    state <= IDLE;
                 end
             endcase
         end
-    end
 	
-	
-	
-	
-
-       assign gpio_out = {24'h0, gpio_out_s[7:0]};// licznik ma być tylko 8 bitowy
+	assign gpio_out = {24'h0, gpio_out_s[7:0]};
     assign gpio_in_s_insp = gpio_in_s;
     assign sdata_out = sdata_out_s;
 endmodule

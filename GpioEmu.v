@@ -46,7 +46,9 @@ module gpioemu(n_reset,
 
     always @(negedge n_reset) begin
         gpio_in_s <= 0;
+		gpio_in <=0;
         gpio_out_s <= 0;
+		gpio_out <= 0;
         sdata_out_s <= 0;
         state <= 4;
         result <=49'b0;
@@ -110,7 +112,7 @@ always @(posedge clk) begin
 			valid <=1'b1;
 			B <= 2'b01;
 			done <= 0;
-            tmp_ones_count <= 0;
+            tmp_ones_count = 0;
             state <= MULT;
         end
         MULT: begin
@@ -128,14 +130,14 @@ always @(posedge clk) begin
         COUNT_ONES: begin
 		 ready <=0;
 		 B <={ready,valid};
-		 tmp_ones_count <= 0;
+		 tmp_ones_count = 0;
             for (integer i = 0; i < 32; i = i + 1) begin
                 if (result[i]) begin
                     tmp_ones_count = tmp_ones_count + 1;
                 end
             end
             L = tmp_ones_count;
-			B <={ready,valid};
+			B ={ready,valid};
             state <= DONE;
         end
         DONE: begin

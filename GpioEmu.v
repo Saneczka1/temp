@@ -127,7 +127,7 @@ always @(posedge clk) begin
             end
         end
         DONE: begin
-           DONE: begin
+           
 		don <= 1'b1;
             if (swr && saddress == 16'h03A0) begin // write B
                 B <= sdata_in[2:1];
@@ -146,7 +146,7 @@ always @(posedge clk) begin
                 operation_count <= operation_count + 1;
             end
         end
-        end
+       
     endcase
 end
 

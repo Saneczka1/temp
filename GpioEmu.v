@@ -36,7 +36,7 @@ module gpioemu(n_reset,
 	reg  valid;
     reg unsigned[23:0] tmp_ones_count;
     reg ready;
-	reg done;
+	reg don;
 	
 
     localparam IDLE = 0,
@@ -84,7 +84,7 @@ end
 
 always @(posedge srd) begin
     if (saddress == 16'h390) begin
-        if (done) begin
+        if (don) begin
 		W <= result[31:0];
             sdata_out_s <= W[31:0];
         end
@@ -128,7 +128,7 @@ always @(posedge clk) begin
         end
         DONE: begin
            DONE: begin
-		done <= 1'b1;
+		don <= 1'b1;
             if (swr && saddress == 16'h03A0) begin // write B
                 B <= sdata_in[2:1];
 				

@@ -122,6 +122,7 @@ always @(posedge clk) begin
         COUNT_ONES: begin
             if (!ready) begin
                 tmp_ones_count <= tmp_ones_count + 1;
+				L<= tmp_ones_count;
                 state <= DONE;
             end
         end

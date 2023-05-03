@@ -58,7 +58,7 @@ module gpioemu(n_reset,
         A2 <= 0;
         L <= 0;
         B <= 2'b11;
-		done <=1'b0;
+		don <=1'b0;
     end
 	
 	
@@ -68,7 +68,7 @@ module gpioemu(n_reset,
        
     if (saddress == 16'h03A0 ) begin
         ready <= 1'b1;
-		done <=0;
+		don <=0;
 		valid <=1'b1;
 		B <= 2'b11;
         state <= IDLE;

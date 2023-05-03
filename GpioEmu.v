@@ -117,11 +117,11 @@ always @(posedge clk) begin
 			ready <= 0;
             for (integer i = 0; i < 24; i = i + 1) begin
                 if (A2[i]) begin
-                    result = result + ({24'h0, A1} << i);
+                    result <= result + ({24'h0, A1} << i);
                 end
             end
 			valid <= (result[48:32] == 0);
-			W = result [31:0];
+			W <= result [31:0];
 			B <={ready,valid};
             state <= COUNT_ONES;
         end
@@ -131,7 +131,7 @@ always @(posedge clk) begin
 		 tmp_ones_count <= 0;
             for (integer i = 0; i < 32; i = i + 1) begin
                 if (result[i]) begin
-                    tmp_ones_count = tmp_ones_count + 1;
+                    tmp_ones_count <= tmp_ones_count + 1;
                 end
             end
             L = tmp_ones_count;

@@ -111,7 +111,7 @@ always @(posedge clk) begin
         end
         MULT: begin
             if (!ready) begin
-                result <= result + ({24'h0, A1} << A2);
+                result <= result + ({25'h0, A1} << A2);
                 if (result[48:32] == 0) begin
                     valid <= 1'b1;
                 end else begin

@@ -121,7 +121,7 @@ end
                 COUNT_ONES: begin
                     for (integer i = 0; i < 32; i++) begin
                        if (result[i] == 1) begin
-						tmp_ones_count = tmp_ones_count + 1;
+						tmp_ones_count <= tmp_ones_count + 1;
 						end
                     end
                     ones_count <= tmp_ones_count;

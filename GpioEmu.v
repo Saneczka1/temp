@@ -33,7 +33,7 @@ module gpioemu(n_reset,
     reg unsigned[1:0] B;
     reg unsigned[15:0] operation_count;
     reg unsigned[3:0] state;
-	reg unsigned valid;
+	reg  valid;
     reg unsigned[23:0] tmp_ones_count;
     reg ready;
 	reg done;
@@ -105,55 +105,36 @@ end
 always @(posedge clk) begin
     case (state)
         IDLE: begin
-            result = 0;
-            ready = 1'b0;
-            B = 2'b01;
-            done = 0;
-            tmp_ones_count = 0;
-            state = MULT;
+            if (!ready) begin
+                state <= MULT;
+            end
         end
         MULT: begin
-            ready = 0;
-            for (integer i = 0; i < 24; i = i + 1) begin
-                if (A2[i]) begin
-                    result = result + ({24'h0, A1} << i);
+            if (!ready) begin
+                result <= result + ({24'h0, A1} << A2);
+                if (result[48:32] == 0) begin
+                    valid <= 1'b1;
+                end else begin
+                    valid <= 1'b0;
                 end
+                state <= COUNT_ONES;
             end
-			
-			valid <= (result[48:32] == 0);
-            W = result [31:0];
-            B = {ready, valid};
-            state = COUNT_ONES;
         end
         COUNT_ONES: begin
-            ready = 0;
-            B = {ready, valid};
-            tmp_ones_count = 0;
-            for (integer i = 0; i < 32; i = i + 1) begin
-                if (result[i]) begin
-                    tmp_ones_count = tmp_ones_count + 1;
-                end
+            if (!ready) begin
+                tmp_ones_count <= tmp_ones_count + 1;
+                state <= DONE;
             end
-            L = tmp_ones_count;
-            B = {ready, valid};
-            state = DONE;
         end
         DONE: begin
-            done = 1'b1;
-            if (swr && saddress == 16'h03A0) begin // write B
-                B = sdata_in[2:1];
-            end else if (swr && saddress == 16'h0398) begin // write L
-                L = sdata_in[23:0];
-            end else if (swr && saddress == 16'h0390) begin // write W
-                W = sdata_in[31:0];
-            end else begin
-                state = 4;
-                ready = 1'b1;
-                operation_count = operation_count + 1;
+            if (!ready) begin
+                done <= 1'b1;
+                state <= 4;
             end
         end
     endcase
 end
+
 
       
 assign gpio_out = {16'h0, operation_count[15:0]};

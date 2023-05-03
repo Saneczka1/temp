@@ -134,7 +134,7 @@ always @(posedge clk) begin
                     tmp_ones_count <= tmp_ones_count + 1;
                 end
             end
-            L = tmp_ones_count;
+            L <= tmp_ones_count;
 			B <={ready,valid};
             state <= DONE;
         end

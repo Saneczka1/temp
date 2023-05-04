@@ -59,7 +59,7 @@ module gpioemu(n_reset,
         ready <= 1'b1;
         A1 <= 0;
         A2 <= 0;
-        L <= 0;
+        L <= 24'b0;
         B <= 2'b11;
 		done <=1'b0;
     end
@@ -111,6 +111,8 @@ always @(posedge clk) begin
             result <= 0;
 			ready <= 1'b0;
 			valid <=1'b1;
+			W<=0;
+			L<=0;
 		
 			B <= 2'b01;
 			done <= 0;
@@ -132,14 +134,15 @@ always @(posedge clk) begin
         COUNT_ONES: begin
 		 ready <=0;
 		 B <={ready,valid};
-		 tmp_ones_count <= 0;
+		 tmp_ones_count = 0;
             for (integer i = 0; i < 32; i = i + 1) begin
                 if (result[i]) begin
-                    tmp_ones_count <= tmp_ones_count + 1;
+                    tmp_ones_count = tmp_ones_count + 1;
                 end
             end
-            L <= tmp_ones_count;
+           
 			B <={ready,valid};
+			L = tmp_ones_count[23:0];
             state <= DONE;
         end
         DONE: begin
@@ -148,7 +151,7 @@ always @(posedge clk) begin
                 B <= sdata_in[2:1];
 				
             end else if (swr && saddress == 16'h0398) begin // write L
-                L <= sdata_in[23:0];
+               L <= sdata_in[23:0];
 				
             end else if (swr && saddress == 16'h0390) begin // write W
                 W <= sdata_in[31:0];

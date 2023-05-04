@@ -111,6 +111,7 @@ always @(posedge clk) begin
             result = 0;
 			ready <= 1'b0;
 			valid <=1'b1;
+		
 			B <= 2'b01;
 			done <= 0;
             tmp_ones_count = 0;
@@ -125,7 +126,7 @@ always @(posedge clk) begin
             end
 			valid <= (result[48:32] == 0);
 			W = result [31:0];
-			B <={ready,valid};
+			B ={ready,valid};
             state <= COUNT_ONES;
         end
         COUNT_ONES: begin
@@ -138,7 +139,7 @@ always @(posedge clk) begin
                 end
             end
             L = tmp_ones_count;
-			B <={ready,valid};
+			B ={ready,valid};
             state <= DONE;
         end
         DONE: begin

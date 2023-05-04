@@ -53,7 +53,7 @@ module gpioemu(n_reset,
         gpio_out_s <= 0;
         sdata_out_s <= 0;
         state <= 4;
-        result <=49'b0;
+        result =49'b0;
 		W <= 32'b0;
         tmp_ones_count = 0;
         operation_count <= 0;
@@ -73,8 +73,8 @@ module gpioemu(n_reset,
     if (saddress == 16'h03A0 ) begin
         ready <= 1'b1;
 		done <=0;
-		valid <=1'b1;
-		B <= 2'b11;
+		valid =1'b1;
+		B = 2'b11;
         state <= IDLE;
         gpio_out_s <= gpio_out_s + 1; //licznik
     end
@@ -109,13 +109,13 @@ end
 always @(posedge clk) begin
     case (state)
         IDLE: begin
-            result <= 0;
+            result = 0;
 			ready <= 1'b0;
-			valid <=1'b1;
+			valid =1'b1;
 			W<=0;
 			L<=0;
 		
-			B <= 2'b01;
+			B = 2'b01;
 			done <= 0;
             tmp_ones_count = 0;
             state <= MULT;
@@ -124,17 +124,19 @@ always @(posedge clk) begin
 			ready <= 0;
             for (integer i = 0; i < 24; i = i + 1) begin
                 if (A2[i]) begin
-                    result <= result + ({25'h0, A1} << i);
+                    result = result + ({25'h0, A1} << i);
                 end
             end
-			valid <= (result[48:32] == 0);
+			
 			W <= result [31:0];
-			B <={ready,valid};
+			valid = (result[48:32] == 0); // Move this line here
+			B ={ready,valid};
+			
             state <= COUNT_ONES;
         end
         COUNT_ONES: begin
 		 ready <=0;
-		 B <={ready,valid};
+		 B ={ready,valid};
 		 tmp_ones_count = 0;
             for (integer i = 0; i < 32; i = i + 1) begin
                 if (result[i]) begin
@@ -142,14 +144,14 @@ always @(posedge clk) begin
                 end
             end
            
-			B <={ready,valid};
+			B ={ready,valid};
 			L = tmp_ones_count[23:0];
             state <= DONE;
         end
         DONE: begin
 		done <= 1'b1;
             if (swr && saddress == 16'h03A0) begin // write B
-                B <= sdata_in[2:1];
+                B = sdata_in[2:1];
 				
             end else if (swr && saddress == 16'h0398) begin // write L
                L <= sdata_in[23:0];

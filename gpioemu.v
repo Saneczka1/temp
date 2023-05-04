@@ -61,7 +61,7 @@ module gpioemu(n_reset,
         A1 <= 0;
         A2 <= 0;
         L <= 24'b0;
-        B <= 2'b11;
+        B = 2'b11;
 		done <=1'b0;
     end
 	

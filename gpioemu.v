@@ -108,50 +108,50 @@ end
 always @(posedge clk) begin
     case (state)
         IDLE: begin
-            result = 0;
+            result <= 0;
 			ready <= 1'b0;
 			valid <=1'b1;
 		
 			B <= 2'b01;
 			done <= 0;
-            tmp_ones_count = 0;
+            tmp_ones_count <= 0;
             state <= MULT;
         end
         MULT: begin
 			ready <= 0;
             for (integer i = 0; i < 24; i = i + 1) begin
                 if (A2[i]) begin
-                    result = result + ({25'h0, A1} << i);
+                    result <= result + ({25'h0, A1} << i);
                 end
             end
 			valid <= (result[48:32] == 0);
-			W = result [31:0];
-			B ={ready,valid};
+			W <= result [31:0];
+			B <={ready,valid};
             state <= COUNT_ONES;
         end
         COUNT_ONES: begin
 		 ready <=0;
 		 B <={ready,valid};
-		 tmp_ones_count = 0;
+		 tmp_ones_count <= 0;
             for (integer i = 0; i < 32; i = i + 1) begin
                 if (result[i]) begin
-                    tmp_ones_count = tmp_ones_count + 1;
+                    tmp_ones_count <= tmp_ones_count + 1;
                 end
             end
             L = tmp_ones_count;
-			B ={ready,valid};
+			B <={ready,valid};
             state <= DONE;
         end
         DONE: begin
 		done <= 1'b1;
             if (swr && saddress == 16'h03A0) begin // write B
-                B = sdata_in[2:1];
+                B <= sdata_in[2:1];
 				
             end else if (swr && saddress == 16'h0398) begin // write L
                 L <= sdata_in[23:0];
 				
             end else if (swr && saddress == 16'h0390) begin // write W
-                W = sdata_in[31:0];
+                W <= sdata_in[31:0];
 				
             end else begin
                 state <= 4;

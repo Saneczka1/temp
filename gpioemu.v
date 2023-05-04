@@ -55,7 +55,7 @@ module gpioemu(n_reset,
         state <= 4;
         result <=49'b0;
 		W <= 32'b0;
-        tmp_ones_count <= 0;
+        tmp_ones_count = 0;
         operation_count <= 0;
         ready <= 1'b1;
         A1 <= 0;
@@ -117,7 +117,7 @@ always @(posedge clk) begin
 		
 			B <= 2'b01;
 			done <= 0;
-            tmp_ones_count <= 0;
+            tmp_ones_count = 0;
             state <= MULT;
         end
         MULT: begin

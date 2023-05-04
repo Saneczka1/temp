@@ -1,5 +1,5 @@
 $date
-	Thu May 04 00:01:04 2023
+	Thu May 04 13:59:15 2023
 $end
 $version
 	Icarus Verilog
@@ -44,22 +44,15 @@ $var reg 24 ; A2 [23:0] $end
 $var reg 2 < B [1:0] $end
 $var reg 24 = L [23:0] $end
 $var reg 32 > W [31:0] $end
-$var reg 1 ? done $end
+$var reg 1 ? don $end
 $var reg 32 @ gpio_in_s [31:0] $end
 $var reg 32 A gpio_out_s [31:0] $end
-$var reg 16 B operation_count [15:0] $end
-$var reg 1 C ready $end
-$var reg 49 D result [48:0] $end
-$var reg 32 E sdata_out_s [31:0] $end
-$var reg 4 F state [3:0] $end
-$var reg 24 G tmp_ones_count [23:0] $end
-$var reg 1 H valid $end
-$scope begin $ivl_for_loop0 $end
-$var integer 32 I i [31:0] $end
-$upscope $end
-$scope begin $ivl_for_loop1 $end
-$var integer 32 J i [31:0] $end
-$upscope $end
+$var reg 1 B ready $end
+$var reg 49 C result [48:0] $end
+$var reg 32 D sdata_out_s [31:0] $end
+$var reg 4 E state [3:0] $end
+$var reg 24 F tmp_ones_count [23:0] $end
+$var reg 1 G valid $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -72,15 +65,12 @@ b10 6
 $end
 #0
 $dumpvars
-bx J
-bx I
-xH
-bx G
+xG
 bx F
 bx E
 bx D
-xC
-bx B
+bx C
+xB
 bx A
 bx @
 x?
@@ -118,22 +108,19 @@ b1 /
 b10 /
 0$
 #500
+b0 "
+b0 5
 0?
 b11 <
 b0 =
 b0 ;
 b0 :
-1C
-b0 "
-b0 5
-b0 B
-b0 G
+1B
 b0 >
-b0 D
-b100 F
+b100 E
 b0 !
 b0 4
-b0 E
+b0 D
 b0 A
 b0 #
 b0 1
@@ -243,16 +230,17 @@ b11100 /
 b11101 /
 1$
 #6000
+b1 "
+b1 5
 b1 A
-b0 F
-1H
+b0 E
+1G
 b11110 /
 0$
 1-
 #6200
-b1 F
-b1 <
-0C
+b0 F
+b0 C
 b11111 /
 1$
 #6400
@@ -261,32 +249,18 @@ b100000 /
 #6500
 0-
 #6600
-b10 F
-b10000 >
-b10000 D
-b11000 I
 b100001 /
 1$
 #6800
 b100010 /
 0$
 #7000
-b11 F
-b1 =
-b1 G
-b100000 J
 b100011 /
 1$
 #7200
 b100100 /
 0$
 #7400
-b1 "
-b1 5
-b1 B
-1C
-b100 F
-1?
 b100101 /
 1$
 #7600
@@ -329,9 +303,6 @@ b110000 /
 b110001 /
 1$
 #10000
-b10000 !
-b10000 4
-b10000 E
 b110010 /
 0$
 1,
@@ -350,20 +321,11 @@ b110101 /
 b110110 /
 0$
 #11000
-0?
-b11 <
-b0 =
-b0 ;
-b0 :
 b0 "
 b0 5
-b0 B
-b0 G
-b0 >
-b0 D
-b0 !
-b0 4
-b0 E
+b0 ;
+b0 :
+b100 E
 b0 A
 b110111 /
 1$
@@ -472,23 +434,18 @@ b1010001 /
 b1010010 /
 0$
 #16500
+b1 "
+b1 5
 b1 A
-b0 F
+b0 E
 1-
 #16600
-b1 F
-b1 <
-0C
 b1010011 /
 1$
 #16800
 b1010100 /
 0$
 #17000
-b10 F
-b100000000000 >
-b100000000000 D
-b11000 I
 b1010101 /
 1$
 0-
@@ -496,22 +453,12 @@ b1010101 /
 b1010110 /
 0$
 #17400
-b11 F
-b1 =
-b1 G
-b100000 J
 b1010111 /
 1$
 #17600
 b1011000 /
 0$
 #17800
-b1 "
-b1 5
-b1 B
-1C
-b100 F
-1?
 b1011001 /
 1$
 #18000
@@ -556,9 +503,6 @@ b1100101 /
 b1100110 /
 0$
 #20500
-b100000000000 !
-b100000000000 4
-b100000000000 E
 1,
 #20600
 b1100111 /
@@ -577,20 +521,11 @@ b1101010 /
 b1101011 /
 1$
 #21500
-0?
-b11 <
-b0 =
-b0 ;
-b0 :
 b0 "
 b0 5
-b0 B
-b0 G
-b0 >
-b0 D
-b0 !
-b0 4
-b0 E
+b0 ;
+b0 :
+b100 E
 b0 A
 0)
 #21600
@@ -697,8 +632,10 @@ b10000101 /
 b10000110 /
 0$
 #27000
+b1 "
+b1 5
 b1 A
-b0 F
+b0 E
 b10000111 /
 1$
 1-
@@ -706,9 +643,6 @@ b10000111 /
 b10001000 /
 0$
 #27400
-b1 F
-b1 <
-0C
 b10001001 /
 1$
 #27500
@@ -717,34 +651,18 @@ b10001001 /
 b10001010 /
 0$
 #27800
-0H
-b10 F
-b1110000000000000000000 >
-b10000000000001110000000000000000000 D
-b11000 I
 b10001011 /
 1$
 #28000
 b10001100 /
 0$
 #28200
-b11 F
-b11 =
-b11 G
-b100000 J
-b0 <
 b10001101 /
 1$
 #28400
 b10001110 /
 0$
 #28600
-b1 "
-b1 5
-b1 B
-1C
-b100 F
-1?
 b10001111 /
 1$
 #28800
@@ -784,9 +702,6 @@ b10011001 /
 b10011010 /
 0$
 #31000
-b1110000000000000000000 !
-b1110000000000000000000 4
-b1110000000000000000000 E
 b10011011 /
 1$
 1,

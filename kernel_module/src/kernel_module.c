@@ -34,6 +34,7 @@ static struct kobject *kobj_ref;
 static int gpf2ctrlValue;
 static int gpf2we1Value;
 static int gpf2we2Value;
+static int gpf2onesValue;
 static int gpf2wyValue;
 static int gpf2statusValue;
 // ================= funkcje do komunikacji ===========================

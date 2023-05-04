@@ -1,5 +1,6 @@
 /* verilator lint_off UNUSED */
 /* verilator lint_off MULTIDRIVEN */
+/* verilator lint_off BLKSEQ */
 
 module gpioemu(n_reset,
     saddress[15:0], srd, swr,

@@ -4,67 +4,65 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
-#include <stdlib.h>
-#include <string.h>
 #define MAX_BUFFER 1024
-
-/*
-#define 1_ADRES_READ "/proc/sykom/l"
-#define 2_ADRES_WRITE "/proc/sykom/2"
-#define 3_ADRES_READ "/proc/sykom/3"
-#define 4_ADRES_WRITE "/proc/sykom/4"
-#define 5_ADRES_READ "/proc/sykom/5"
-#define 6_ADRES_WRITE "/proc/sykom/6"*/
+#define ss95el1_ADRES_READ "/proc/sykom/ss95el1"
+#define ss95el2_ADRES_WRITE "/proc/sykom/ss95el2"
+#define ss95el3_ADRES_READ "/proc/sykom/ss95el3"
+#define ss95el4_ADRES_WRITE "/proc/sykom/ss95el4"
+#define ss95el5_ADRES_READ "/proc/sykom/ss95el5"
+#define ss95el6_ADRES_WRITE "/proc/sykom/ss95el6"
 
 
 
-#define SYSFS_FILE_WE1 "/sys/kernel/sykt/raba1"
-#define SYSFS_FILE_WE2 "/sys/kernel/sykt/raba2"
-#define SYSFS_FILE_RES "/sys/kernel/sykt/rabw"
-#define SYSFS_FILE_STATUS "/sys/kernel/sykt/rabb"
-#define SYSFY_FILE_ONES "/sys/kernel/sykt/rabl"
+#define GPIO_1_TEST_VALUE_1         0x6000
+#define GPIO_1_TEST_VALUE_2         0x7000
+#define GPIO_1_TEST_VALUE_3         0x240
+#define GPIO_2_TEST_VALUE_1         0x6000000
+#define GPIO_2_TEST_VALUE_2         0x7000000
+#define GPIO_2_TEST_VALUE_3         0x140000
+
+//void test_int(){
+//  char buffer[MAX_BUFFER];
+//  printf("Test INT\n");
+//  int i = 0;
+//  while(i < 45){
+//    int ss95el5_adres_read=open(ss95el5_ADRES_READ, O_RDONLY); //otwarcie pliku „out” sterownika
+//    if(ss95el5_adres_read<0){
+//      printf("Open %s – error: %d\n", ss95el5_ADRES_READ, errno);
+//      exit(6);
+//    }
+//    
+//    int ss95el5_adres_read_odczyt =read(ss95el5_adres_read, buffer, MAX_BUFFER); //odczyt danych ze sterownika
+//   
+//    if(ss95el5_adres_read_odczyt>0){
+//      buffer[ss95el5_adres_read_odczyt]='\0';
+//      printf("INT %s\n", buffer);
+//      }
+//  
+//    sleep(1);
+//    i++;
+//    close(ss95el5_adres_read);
+//  
+//    }
+//  }
 
 
 
-unsigned int read_from_file(char *);   // oby nie było błędów z kompilacją i z kolejnoscią, definiuje metody na początku
-int write_to_file(char *, unsigned int);
-unsigned int multiply(unsigned int, unsigned int);
-int test_module();
-
-
-if(test > 0){
-printf("TEST FAILED at %d values\n",test);
-}
-else{
-printf("====== TEST PASSED =====\n");
-}
-return 0;
-}
-
-int main(void){
-int test = test_module();
-
-
-
-
-unsigned int read_from_file(char *filePath){
-char buffer[MAX_BUFFER];
-
-int file=open(filePath, O_RDONLY);
-if(file<0){
-printf("Open %s - error number %d\n", filePath, errno);
-exit(1);
-}
-int n=read(file, buffer, MAX_BUFFER);
-if(n>0){
+void read_from_file(char *filePath){
+	char buffer[MAX_BUFFER];
+	int fd_out=open(filePath, O_RDONLY);
+	if(fd_out<0){
+		 printf("Open %s - error %d\n", filePath, errno);
+		 exit(1);
+	}
+	int n = read(fd_out, buffer, MAX_BUFFER);
+    if(n>0){
         buffer[n]='\0';
         printf("%s", buffer); 
     }else{
         printf("Open %s - error %d\n", filePath, errno); 
     }
-
-close(file);
-return strtoul(buffer, NULL, 16);
+	close(fd_out); 
 }
 
 
@@ -89,38 +87,153 @@ void write_to_file(char *filePath, unsigned int input){
 
 
 
-
-
-unsigned int multiply(unsigned int arg1, unsigned int arg2){
-write_to_file(SYSFS_FILE_WE1,arg1);
-write_to_file(SYSFS_FILE_WE2,arg2);
-write_to_file(SYSFS_FILE_ONES);
-write_to_file(SYSFS_FILE_STATUS,1);
-unsigned int read;
-do{
-read = read_from_file(SYSFS_FILE_STATUS);
-}
-while(read != 3);
-read = read_from_file(SYSFS_FILE_RES);
-read1 = read_from_file(SYSFS_FILE_ONES);
-read2 = read_from_file(SYSFS_FILE_STATUS);
-
-printf("Arg1=0x%x, Arg2=0x%x, W=0x%x, L=0x%x, B =0x%x", arg1, arg2, read, read1,read2);
-return read;
+void gpio_read_test(){
+    printf("Odczyt z czujnika 1: ");
+    read_from_file(ss95el1_ADRES_READ);
+    printf("Odczyt z czujnika 2: ");
+    read_from_file(ss95el3_ADRES_READ);
 }
 
 
+void gpio_write_test(){
+    write_to_file(ss95el2_ADRES_WRITE, GPIO_1_TEST_VALUE_1);
+    write_to_file(ss95el2_ADRES_WRITE, GPIO_1_TEST_VALUE_2);
+    write_to_file(ss95el4_ADRES_WRITE, GPIO_2_TEST_VALUE_1);
+    // write_to_file(ss95el4_adres_write, GPIO_1_TEST_VALUE_3);
+    write_to_file(ss95el4_ADRES_WRITE, GPIO_2_TEST_VALUE_2);
+    // write_to_file(ss95el4_adres_write, GPIO_2_TEST_VALUE_3);
+}
 
 
-int test_module(){
-unsigned int args1[3] = { 3, c, 8};
-unsigned int args2[3] = { 4, 3, 3};
-unsigned int results[3] = { 0xC,24,18 };
-unsigned int ones[3] ={2,2,2};
-for(int i=0; i<7; i++){
-if( multiply(args1[i],args2[i]) != results[i] && != ones[i])
-return i+1;
+void test_int(){
+  char buffer[MAX_BUFFER];
+  printf("Testowanie INTa\n");
+  int i = 0;
+  while(i < 30){
+    int ss95el5_adres_read=open(ss95el5_ADRES_READ, O_RDONLY); //otwarcie pliku „out” sterownika
+    if(ss95el5_adres_read<0){
+      printf("Open %s – error: %d\n", ss95el5_ADRES_READ, errno);
+      exit(6);
+    }
+    
+    int ss95el5_adres_read_odczyt =read(ss95el5_adres_read, buffer, MAX_BUFFER); //odczyt danych ze sterownika
+   
+    if(ss95el5_adres_read_odczyt>0){
+      buffer[ss95el5_adres_read_odczyt]='\0';
+      printf("wartosc int %s\n", buffer);
+      }
+  
+    sleep(1);
+    i++;
+    close(ss95el5_adres_read);
+    }
+  }
+
+int main(void){
+//  
+//  char buffer[MAX_BUFFER];
+//  test_int();
+//  
+//
+//  printf("Zapis jedynki logicznej z przesunięciem 7 bitów na INT\n");
+//  int ss95el6_adres_write=open(ss95el6_ADRES_WRITE, O_RDWR); //otwarcie pliku „in” sterownika
+//  if(ss95el6_adres_write<0){
+//     printf("Open %s – error: %d\n", ss95el6_ADRES_WRITE, errno);
+//     exit(5);
+//  }
+//  snprintf(buffer, MAX_BUFFER, "128"); //treść do przekazania sterownikowi
+//  int ss95el6_adres_write_zapis=write(ss95el6_adres_write, buffer, strlen(buffer)); //właściwe przekazanie danych
+//  if(ss95el6_adres_write_zapis!=strlen(buffer)){ 
+//  } 
+//  close(ss95el6_adres_write);
+//      
+//  
+//  test_int();
+  
+  
+//   int ss95el2_adres_write=open(ss95el2_ADRES_WRITE, O_RDWR); //otwarcie pliku „in” sterownika
+//   if(ss95el2_adres_write<0){
+//     printf("Open %s – error: %d\n", ss95el2_ADRES_WRITE, errno);
+//     exit(1);
+//   }
+  
+//   int ss95el4_adres_write=open(ss95el4_ADRES_WRITE, O_RDWR); //otwarcie pliku „in” sterownika
+//   if(ss95el4_adres_write<0){
+//     printf("Open %s – error: %d\n", ss95el4_ADRES_WRITE, errno);
+//     close(ss95el2_adres_write);
+//     exit(3);
+//   }
+  
+  
+  
+//   printf("Test zapisu - GpioConsole\n");
+//   snprintf(buffer, MAX_BUFFER, "0000cccc"); //treść do przekazania sterownikowi
+//   int ss95el2_adres_write_zapis=write(ss95el2_adres_write, buffer, strlen(buffer)); //właściwe przekazanie danych
+//   if(ss95el2_adres_write_zapis!=strlen(buffer)){ 
+//   }
+//   snprintf(buffer, MAX_BUFFER, "55550000"); //treść do przekazania sterownikowi
+//   int ss95el4_adres_write_zapis=write(ss95el4_adres_write, buffer, strlen(buffer)); //właściwe przekazanie danych
+//   if(ss95el4_adres_write_zapis!=strlen(buffer)){ 
+//   }   
+  
+//   close(ss95el2_adres_write);
+//   close(ss95el4_adres_write);
+//   sleep(2);
+  
+  
+//   printf("Test odczytu\n");
+//   int i = 0;
+//   while(i < 20){
+//     int ss95el1_adres_read=open(ss95el1_ADRES_READ, O_RDONLY); //otwarcie pliku „out” sterownika
+//     if(ss95el1_adres_read<0){
+//       printf("Open %s – error: %d\n", ss95el1_ADRES_READ, errno);
+//       close(ss95el1_adres_read); //nikt inny nie zamknie wcześniej otwartego pliku
+//       exit(2);
+//     }
+//     int ss95el3_adres_read=open(ss95el3_ADRES_READ, O_RDONLY); //otwarcie pliku „out” sterownika
+//     if(ss95el3_adres_read<0){
+//       printf("Open %s – error: %d\n", ss95el3_ADRES_READ, errno);
+//       close(ss95el1_adres_read);
+//       exit(4);
+//     }
+    
+   
+//     int ss95el1_adres_read_odczyt=read(ss95el1_adres_read, buffer, MAX_BUFFER); //odczyt danych ze sterownika
+//     if(ss95el1_adres_read_odczyt>0){
+//       buffer[ss95el1_adres_read_odczyt]='\0';
+//       printf("Czujnik 1 %s\n", buffer);
+//       }
+      
+//     int ss95el3_adres_read_odczyt=read(ss95el3_adres_read, buffer, MAX_BUFFER); //odczyt danych ze sterownika
+//     if(ss95el3_adres_read_odczyt>0){
+//       buffer[ss95el3_adres_read_odczyt]='\0';
+//       printf("Czujnik 2 %s\n", buffer);
+//       }
+//       close(ss95el1_adres_read);
+//       close(ss95el3_adres_read);
+//       sleep(1);
+//       i++;
+//   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// gpio_read_test();
+gpio_write_test();
+//   test_int();
+  return 0; 
 
 }
-return 0;
-}
+
+
+

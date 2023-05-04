@@ -31,25 +31,25 @@ MODULE_VERSION("0.01");
 
 void __iomem *baseptr;
 static struct kobject *kobj_ref;
-static int gpf2ctrlValue;
-static int gpf2we1Value;
-static int gpf2we2Value;
-static int gpf2onesValue;
-static int gpf2wyValue;
-static int gpf2statusValue;
+static int gpf2ctrl;
+static int gpf2we1;
+static int gpf2we2;
+static int gpf2ones;
+static int gpf2wy;
+static int gpf2status;
 // ================= funkcje do komunikacji ===========================
 // odczyt argumentu arg1 i zapis na odpowiednie miejsce w pamięci // potrzebuje do zapisu tylko 2 znaczeńczyli tylko argumetu 1 i argumentu 2
 static ssize_t gpf2we1_store(struct kobject *kobj,struct kobj_attribute *attr,const char *buf, size_t count)
 {
-sscanf(buf,"%x",&gpf2we1Value);
-writel(gpf2we1Value, SYKT_GPIO_ARG1_ADDR);
+sscanf(buf,"%x",&gpf2we1);
+writel(gpf2we1, SYKT_GPIO_ARG1_ADDR);
 return count;
 }
 // odczyt argumentu arg2 i zapis na odpowiednie miejsce w pamięci
 static ssize_t gpf2we2_store(struct kobject *kobj,struct kobj_attribute *attr,const char *buf, size_t count)
 {
-sscanf(buf,"%x",&gpf2we2Value);
-writel(gpf2we2Value, SYKT_GPIO_ARG2_ADDR);
+sscanf(buf,"%x",&gpf2we2);
+writel(gpf2we2, SYKT_GPIO_ARG2_ADDR);
 return count;
 }
 
@@ -58,30 +58,30 @@ return count;
 // odczyt wyniku z modułu
 static ssize_t gpf2wy_show(struct kobject *kobj,struct kobj_attribute *attr, char *buf)
 {
-gpf2wyValue = readl(SYKT_GPIO_RESULT_ADDR);
-return sprintf(buf, "%x", gpf2wyValue);
+gpf2wy = readl(SYKT_GPIO_RESULT_ADDR);
+return sprintf(buf, "%x", gpf2wy);
 }
 
 
 static ssize_t gpf2status_store(struct kobject *kobj,struct kobj_attribute *attr,const char *buf, size_t count)   //  ten fragment trzeba będzie pewnie poprawić bo on wczytuje status  od użytkownika
 {
-sscanf(buf,"%x",&gpf2ctrlValue);     //czemu tu jest tak a nie inaczej?
-writel(gpf2ctrlValue, SYKT_GPIO_CTRL_ADDR);
+sscanf(buf,"%x",&gpf2ctrl);     //czemu tu jest tak a nie inaczej?
+writel(gpf2ctrl, SYKT_GPIO_CTRL_ADDR);
 return count;
 }
 
 static ssize_t gpf2ones_show(struct kobject *kobj,struct kobj_attribute *attr, char *buf)
 {
-    gpf2onesValue = readl(SYKT_GPIO_ONES_ADDR);
-    return sprintf(buf, "%x", gpf2onesValue);
+    gpf2ones = readl(SYKT_GPIO_ONES_ADDR);
+    return sprintf(buf, "%x", gpf2ones);
 }
 
 // odczyt statusu (czy moduł skończył działanie)
 static ssize_t gpf2status_show(struct kobject *kobj,struct kobj_attribute *attr, char *buf)
 
 {
-gpf2statusValue = readl(SYKT_GPIO_STATUS_ADDR);
-return sprintf(buf, "%x", gpf2statusValue);
+gpf2status = readl(SYKT_GPIO_STATUS_ADDR);
+return sprintf(buf, "%x", gpf2status);
 }
 // makra do komunikacji
 
